@@ -5,9 +5,9 @@ It primarily uses selenium and beautiful soup together with python. I developed 
 Usage: python bscrape.py [optional flags] [URL]
 
 Optional flags include:
--y: The earliest date to find from the web page
--h: Displays usage text (also displays upon unexpected formatting)
--n: the name of the file(s) to output. If it's not provided, it defaults to the page's domain name
+* -y: The earliest date to find from the web page
+* -h: Displays usage text (also displays upon unexpected formatting)
+* -n: the name of the file(s) to output. If it's not provided, it defaults to the page's domain name
 
 The URL is required.
 
