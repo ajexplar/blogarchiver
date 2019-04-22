@@ -1,0 +1,12 @@
+# ignore venv directories
+__pycache__/
+bin/
+lib/
+share/
+
+# ignore venv files
+lib64
+pyvenv.cfg
+
+# ignore selenium files
+geckodriver.log
