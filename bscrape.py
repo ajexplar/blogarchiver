@@ -1,66 +1,32 @@
+import argparse
 import logging
-import sys
 
-from scraper import Scraper
+from scraper import ScraperX
+
+def argprep():
+    logging.debug('Collecting arguments')
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('url', help='The url of the website to begin scraping from')
+    parser.add_argument('path', help='The path to save scraped files to')
+
+    parser.add_argument('-d', '--depth', help='How many links deep the scraper should go from the first page (defaults to only one page)', type=int)
+    parser.add_argument('-b', '--bodytext', help='Attempts to extract the text within the body of the page only', action='store_true')
+    parser.add_argument('-f', '--filename', help='The filename to save the scraped info to. Defaults to the webhost\'s name')
+    parser.add_argument('-v', '--verbose', help='Shows information on each step of the scraping-saving process', action='store_true')
+
+    args = parser.parse_args()
+    return vars(args)
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.INFO)
+    logging.debug('Started logging')
 
-    data = parse_arguments(sys.argv)
+    args = argprep()
 
-    if len(data) >= 1:
-        scour = Scraper(logger)
-        scour.provide_user_values(data)
-        scour.launch_webdriver()
-        scour.run()
-
-def parse_arguments(args):
-    help_text = '''USE: bscrape.py [arguments]  http(s)://[url]\n
-        Arguments are optional. You can use:\n
-        \t-y: Earliest date to find
-        \t-h: This usage text
-        \t-n: Use your own name for the outputted files
-        The url is required. It ought to be a page that contains a list of page's in the site's history
-    ''' 
-    user_args = args[1:]
-    if len(user_args) == 0:
-        logging.info(help_text)
-        return {}
-    else:
-        user_data = {}
-        dirty_flag = False
-        logging.debug('User Args:' + str(user_args))
-        args_iter = iter(range(len(user_args)))
-        for i in args_iter:
-            if user_args[i] == '-h':
-                logging.info(help_text)
-                return {}
-            else:
-                if user_args[i] == '-y':
-                    if i+1 < len(user_args):
-                        user_data['start_date'] = user_args[i+1]
-                        next(args_iter)
-                    else:
-                        dirty_flag = True
-                        break
-                elif user_args[i] == '-n':
-                    if i+1 < len(user_args):
-                        user_data['file_name'] = user_args[i+1]
-                        next(args_iter)
-                    else:
-                        dirty_flag = True
-                        break
-                else:
-                    user_data['url'] = user_args[i]
-                    break
-
-        if dirty_flag:
-            logging.debug('Argument flag is missing a value')
-            logging.info(help_text)
-            return {}
-        else:
-            return user_data
+    scraper = ScraperX()
+    if scraper.assign_vars(args): # only proceed if arguments were passed in OK
+        scraper.scrape()
 
 if __name__ == '__main__':
     main()
